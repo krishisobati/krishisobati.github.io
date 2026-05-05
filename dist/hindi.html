@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>कृषि सोबती — आपका AI खेती सलाहकार</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Tiro+Devanagari+Hindi:ital@0;1&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep: #1a3d1f;
+      --green-mid: #2d6a31;
+      --green-light: #4caf50;
+      --green-pale: #c8e6c9;
+      --gold: #f9a825;
+      --gold-light: #fff9c4;
+      --cream: #fdf6e3;
+      --brown: #5d4037;
+      --saffron: #ff7043;
+      --white: #ffffff;
+      --text-dark: #1a2e1b;
+      --text-muted: #4a6741;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Tiro Devanagari Hindi', 'Lato', sans-serif; background: var(--cream); color: var(--text-dark); overflow-x: hidden; }
+
+    .lang-bar { background: var(--green-deep); padding: 10px 24px; display: flex; justify-content: flex-end; gap: 8px; align-items: center; }
+    .lang-bar span { color: var(--green-pale); font-size: 13px; margin-right: 6px; letter-spacing: 0.5px; font-family: 'Lato', sans-serif; }
+    .lang-btn { padding: 5px 16px; border-radius: 20px; border: 1.5px solid var(--green-pale); background: transparent; color: var(--green-pale); font-size: 13px; cursor: pointer; transition: all 0.2s; font-family: 'Lato', sans-serif; text-decoration: none; display: inline-block; }
+    .lang-btn.active, .lang-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--green-deep); font-weight: 700; }
+
+    .hero { background: linear-gradient(135deg, var(--green-deep) 0%, #2e7d32 55%, #388e3c 100%); position: relative; overflow: hidden; }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 80% 50%, rgba(76,175,80,0.15) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: 500px; max-width: 1100px; margin: 0 auto; padding: 60px 32px; gap: 40px; align-items: center; }
+    .hero-text h1 { font-family: 'Playfair Display', 'Tiro Devanagari Hindi', serif; font-size: clamp(2.2rem, 5vw, 3.6rem); color: var(--white); line-height: 1.2; margin-bottom: 8px; }
+    .hero-text h1 span { color: var(--gold); }
+    .hero-subtitle { font-size: 1.05rem; color: var(--green-pale); margin: 16px 0 28px; line-height: 1.8; font-weight: 400; max-width: 440px; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 30px; padding: 8px 18px; color: var(--gold-light); font-size: 0.85rem; margin-bottom: 28px; font-family: 'Lato', sans-serif; }
+    .hero-badge .dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .cta-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--gold); color: var(--green-deep); font-weight: 700; font-size: 1rem; padding: 14px 30px; border-radius: 50px; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(249,168,37,0.4); font-family: 'Lato', sans-serif; }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(249,168,37,0.5); }
+
+    .hero-visual { display: flex; justify-content: center; align-items: flex-end; }
+    .farmer-svg { width: 300px; height: 360px; }
+
+    /* Indian tricolor accent strip */
+    .tricolor { height: 5px; background: linear-gradient(to right, #ff7043 33%, #ffffff 33%, #ffffff 66%, #1565c0 66%); }
+
+    .wave { display: block; width: 100%; }
+
+    .section { max-width: 1000px; margin: 0 auto; padding: 60px 24px; }
+    .section-label { text-transform: uppercase; letter-spacing: 3px; font-size: 0.75rem; color: var(--green-mid); font-weight: 700; margin-bottom: 10px; font-family: 'Lato', sans-serif; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.4rem); color: var(--green-deep); margin-bottom: 40px; }
+
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; }
+    .step { background: var(--white); border-radius: 16px; padding: 28px 24px; border: 1px solid var(--green-pale); transition: transform 0.2s, box-shadow 0.2s; }
+    .step:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,61,31,0.1); }
+    .step-num { width: 42px; height: 42px; background: var(--saffron); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+    .step h3 { color: var(--green-deep); font-size: 1rem; margin-bottom: 8px; }
+    .step p { color: var(--text-muted); font-size: 0.92rem; line-height: 1.7; }
+
+    .features-bg { background: var(--green-deep); }
+    .features-section { max-width: 1000px; margin: 0 auto; padding: 60px 24px; }
+    .features-section .section-label { color: var(--gold); }
+    .features-section .section-title { color: var(--white); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+    .feature-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 24px; }
+    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature-card h4 { color: var(--gold); font-size: 0.95rem; margin-bottom: 8px; }
+    .feature-card p { color: rgba(255,255,255,0.75); font-size: 0.9rem; line-height: 1.7; }
+
+    .qr-section { max-width: 800px; margin: 0 auto; padding: 60px 24px; text-align: center; }
+    .qr-card { background: var(--white); border-radius: 24px; padding: 48px 40px; box-shadow: 0 8px 40px rgba(26,61,31,0.1); border: 2px solid var(--green-pale); display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .qr-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--green-deep); }
+    .qr-subtitle { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; max-width: 420px; }
+    .qr-box { width: 200px; height: 200px; border: 3px solid var(--green-deep); border-radius: 16px; overflow: hidden; background: var(--white); display: flex; align-items: center; justify-content: center; }
+    .qr-svg { width: 160px; height: 160px; }
+    .qr-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; font-family: 'Lato', sans-serif; }
+    .whatsapp-number { display: flex; align-items: center; gap: 12px; background: #25d366; color: white; padding: 14px 28px; border-radius: 50px; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; font-family: 'Lato', sans-serif; }
+    .join-instruction { background: var(--gold-light); border-left: 4px solid var(--saffron); border-radius: 8px; padding: 14px 20px; font-size: 0.9rem; color: var(--brown); text-align: left; max-width: 400px; line-height: 1.7; }
+    .join-instruction strong { display: block; margin-bottom: 4px; font-family: 'Lato', sans-serif; }
+
+    .lang-strip { background: var(--green-pale); padding: 20px 24px; text-align: center; }
+    .lang-strip p { color: var(--green-deep); font-size: 0.9rem; margin-bottom: 10px; }
+    .lang-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .chip { background: var(--white); border: 1.5px solid var(--green-mid); border-radius: 20px; padding: 5px 16px; font-size: 0.85rem; color: var(--green-deep); font-weight: 700; }
+
+    footer { background: var(--green-deep); padding: 28px 24px; text-align: center; color: rgba(255,255,255,0.5); font-size: 0.88rem; font-family: 'Lato', sans-serif; }
+    footer strong { color: var(--gold); }
+    footer .kisan { color: var(--green-pale); font-size: 1rem; display: block; margin-top: 6px; }
+
+    @media (max-width: 680px) { .hero-inner { grid-template-columns: 1fr; text-align: center; padding: 40px 20px; } .hero-visual { display: none; } .hero-subtitle { margin: 16px auto 28px; } }
+  </style>
+</head>
+<body>
+
+<div class="lang-bar">
+  <span>भाषा चुनें:</span>
+  <a class="lang-btn" href="index.html">English</a>
+  <a class="lang-btn active" href="hindi.html">हिंदी</a>
+  <a class="lang-btn" href="marathi.html">मराठी</a>
+</div>
+
+<div class="tricolor"></div>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        AI-संचालित WhatsApp चैटबॉट
+      </div>
+      <h1>आपका स्मार्ट<br/><span>खेती सलाहकार</span><br/>WhatsApp पर</h1>
+      <p class="hero-subtitle">अपने खेत की जानकारी भेजें और पाएं हफ्ते-दर-हफ्ते की पूरी फसल योजना — अपनी भाषा में, बिल्कुल मुफ्त।</p>
+      <a href="#connect" class="cta-btn">
+        <span>💬</span> WhatsApp पर बात करें
+      </a>
+    </div>
+    <div class="hero-visual">
+      <svg class="farmer-svg" viewBox="0 0 300 360" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="150" cy="338" rx="120" ry="22" fill="rgba(0,0,0,0.15)"/>
+        <!-- Field rows -->
+        <g opacity="0.5">
+          <line x1="20" y1="340" x2="35" y2="255" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="35" cy="250" rx="5" ry="13" fill="#81c784" transform="rotate(-8,35,250)"/>
+          <line x1="45" y1="340" x2="60" y2="248" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="60" cy="243" rx="5" ry="13" fill="#66bb6a" transform="rotate(10,60,243)"/>
+          <line x1="225" y1="340" x2="238" y2="252" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="238" cy="247" rx="5" ry="13" fill="#81c784"/>
+          <line x1="248" y1="340" x2="262" y2="256" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="262" cy="251" rx="5" ry="13" fill="#66bb6a" transform="rotate(-12,262,251)"/>
+          <line x1="270" y1="340" x2="280" y2="248" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="280" cy="243" rx="5" ry="13" fill="#81c784" transform="rotate(7,280,243)"/>
+        </g>
+        <rect x="20" y="328" width="260" height="32" rx="8" fill="#33691e" opacity="0.4"/>
+        <!-- Body - kurta -->
+        <rect x="114" y="212" width="72" height="105" rx="12" fill="#ff7043" opacity="0.9"/>
+        <!-- Kurta detail -->
+        <line x1="150" y1="218" x2="150" y2="260" stroke="#bf360c" stroke-width="2" opacity="0.5"/>
+        <!-- Legs -->
+        <rect x="120" y="308" width="22" height="44" rx="10" fill="#5d4037"/>
+        <rect x="158" y="308" width="22" height="44" rx="10" fill="#5d4037"/>
+        <ellipse cx="131" cy="352" rx="13" ry="6" fill="#3e2723"/>
+        <ellipse cx="169" cy="352" rx="13" ry="6" fill="#3e2723"/>
+        <!-- Arms -->
+        <path d="M114 230 Q78 210 68 178" stroke="#c68642" stroke-width="15" stroke-linecap="round" fill="none"/>
+        <path d="M186 230 Q214 248 220 272" stroke="#c68642" stroke-width="15" stroke-linecap="round" fill="none"/>
+        <!-- Raised hand plant -->
+        <line x1="68" y1="178" x2="68" y2="130" stroke="#388e3c" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="68" cy="124" rx="11" ry="17" fill="#4caf50" transform="rotate(-12,68,124)"/>
+        <ellipse cx="57" cy="136" rx="9" ry="13" fill="#66bb6a" transform="rotate(18,57,136)"/>
+        <ellipse cx="79" cy="134" rx="9" ry="13" fill="#43a047" transform="rotate(-18,79,134)"/>
+        <!-- Neck -->
+        <rect x="140" y="193" width="20" height="22" rx="6" fill="#c68642"/>
+        <!-- Head -->
+        <circle cx="150" cy="178" r="36" fill="#c68642"/>
+        <!-- Face — big happy -->
+        <path d="M136 175 Q141 169 146 175" stroke="#3e2723" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M154 175 Q159 169 164 175" stroke="#3e2723" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M136 188 Q150 202 164 188" stroke="#3e2723" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <circle cx="133" cy="190" r="6" fill="#e57373" opacity="0.35"/>
+        <circle cx="167" cy="190" r="6" fill="#e57373" opacity="0.35"/>
+        <path d="M141 186 Q150 190 159 186" stroke="#4e342e" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <!-- Gandhi cap / topi -->
+        <ellipse cx="150" cy="147" rx="40" ry="11" fill="#ffffff" opacity="0.9"/>
+        <path d="M110 147 Q122 128 150 122 Q178 128 190 147" fill="#ffffff" opacity="0.9"/>
+        <rect x="110" y="144" width="80" height="5" rx="2" fill="#e0e0e0"/>
+        <!-- Tool right hand -->
+        <line x1="220" y1="272" x2="238" y2="330" stroke="#795548" stroke-width="5" stroke-linecap="round"/>
+        <rect x="226" y="322" width="26" height="7" rx="3" fill="#546e7a" transform="rotate(-18,226,322)"/>
+        <!-- Floating icons -->
+        <circle cx="240" cy="138" r="20" fill="#25d366" opacity="0.95"/>
+        <text x="240" y="145" text-anchor="middle" font-size="16" fill="white">💬</text>
+        <text x="88" y="118" font-size="13" fill="#f9a825" opacity="0.9">✦</text>
+        <text x="210" y="108" font-size="9" fill="#f9a825" opacity="0.7">✦</text>
+        <!-- Rupee coin -->
+        <circle cx="45" cy="188" r="14" fill="#f9a825" opacity="0.85"/>
+        <text x="45" y="193" text-anchor="middle" font-size="12" fill="#1a3d1f" font-weight="bold">₹</text>
+      </svg>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,30 C480,70 960,0 1440,40 L1440,60 L0,60 Z" fill="#fdf6e3"/>
+  </svg>
+</section>
+
+<section class="section">
+  <p class="section-label">यह कैसे काम करता है</p>
+  <h2 class="section-title">बस एक मैसेज भेजिए 📱</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">१</div>
+      <h3>QR स्कैन करें</h3>
+      <p>नीचे दिया QR कोड स्कैन करें या नंबर सेव करके WhatsApp पर "नमस्ते" भेजें।</p>
+    </div>
+    <div class="step">
+      <div class="step-num">२</div>
+      <h3>जानकारी दें</h3>
+      <p>अपना जिला, फसल, जमीन का आकार और पानी का स्रोत बताएं — अपनी भाषा में।</p>
+    </div>
+    <div class="step">
+      <div class="step-num">३</div>
+      <h3>योजना पाएं</h3>
+      <p>हफ्ते-दर-हफ्ते की पूरी फसल योजना तुरंत मिलेगी — मौसम और स्थान के अनुसार।</p>
+    </div>
+    <div class="step">
+      <div class="step-num">४</div>
+      <h3>बेहतर खेती करें</h3>
+      <p>मिट्टी तैयारी से कटाई तक, हर काम की सही जानकारी आपके फोन पर।</p>
+    </div>
+  </div>
+</section>
+
+<div class="features-bg">
+  <div class="features-section">
+    <p class="section-label">कृषि सोबती क्या देता है</p>
+    <h2 class="section-title">आपके खेत के लिए सब कुछ 🌾</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🗺️</div>
+        <h4>स्थान के अनुसार सलाह</h4>
+        <p>आपके जिले की जलवायु और मिट्टी के हिसाब से तैयार फसल कार्यक्रम।</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h4>8 भारतीय भाषाएं</h4>
+        <p>हिंदी, मराठी, पंजाबी, तमिल, तेलुगु, कन्नड़, बंगाली और अंग्रेजी में बात करें।</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h4>हफ्ते-दर-हफ्ते योजना</h4>
+        <p>जुताई → बुवाई → सिंचाई → खाद → कीट नियंत्रण → कटाई — सब एक जगह।</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h4>AI-आधारित ज्ञान</h4>
+        <p>ICAR प्रकाशन, विकासपीडिया और राज्य कृषि विभाग की जानकारी पर आधारित।</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📞</div>
+        <h4>किसान हेल्पलाइन</h4>
+        <p>ज़रूरत पड़ने पर किसान कॉल सेंटर: <strong style="color:var(--gold)">1800-180-1551</strong> से जोड़ेंगे।</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💚</div>
+        <h4>बिल्कुल मुफ्त</h4>
+        <p>कोई ऐप डाउनलोड नहीं, कोई रजिस्ट्रेशन नहीं। सिर्फ WhatsApp — जो आप पहले से इस्तेमाल करते हैं।</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lang-strip">
+  <p>कृषि सोबती आपकी भाषा में बात करता है</p>
+  <div class="lang-chips">
+    <span class="chip">English</span>
+    <span class="chip">हिंदी</span>
+    <span class="chip">मराठी</span>
+    <span class="chip">ਪੰਜਾਬੀ</span>
+    <span class="chip">தமிழ்</span>
+    <span class="chip">తెలుగు</span>
+    <span class="chip">ಕನ್ನಡ</span>
+    <span class="chip">বাংলা</span>
+  </div>
+</div>
+
+<section class="qr-section" id="connect">
+  <div class="qr-card">
+    <h2 class="qr-title">अभी बात शुरू करें 🌱</h2>
+    <p class="qr-subtitle">नीचे QR कोड स्कैन करें या नंबर सेव करके "नमस्ते" भेजें — कृषि सोबती से बात शुरू हो जाएगी।</p>
+    <div class="qr-box">
+      <svg class="qr-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <rect width="160" height="160" fill="white"/>
+        <rect x="10" y="10" width="44" height="44" rx="4" fill="#1a3d1f"/>
+        <rect x="16" y="16" width="32" height="32" rx="2" fill="white"/>
+        <rect x="22" y="22" width="20" height="20" rx="1" fill="#1a3d1f"/>
+        <rect x="106" y="10" width="44" height="44" rx="4" fill="#1a3d1f"/>
+        <rect x="112" y="16" width="32" height="32" rx="2" fill="white"/>
+        <rect x="118" y="22" width="20" height="20" rx="1" fill="#1a3d1f"/>
+        <rect x="10" y="106" width="44" height="44" rx="4" fill="#1a3d1f"/>
+        <rect x="16" y="112" width="32" height="32" rx="2" fill="white"/>
+        <rect x="22" y="118" width="20" height="20" rx="1" fill="#1a3d1f"/>
+        <g fill="#1a3d1f">
+          <rect x="62" y="10" width="8" height="8" rx="1"/><rect x="74" y="10" width="8" height="8" rx="1"/>
+          <rect x="86" y="22" width="8" height="8" rx="1"/><rect x="62" y="34" width="8" height="8" rx="1"/>
+          <rect x="74" y="46" width="8" height="8" rx="1"/><rect x="86" y="46" width="8" height="8" rx="1"/>
+          <rect x="10" y="62" width="8" height="8" rx="1"/><rect x="34" y="62" width="8" height="8" rx="1"/>
+          <rect x="46" y="62" width="8" height="8" rx="1"/><rect x="74" y="62" width="8" height="8" rx="1"/>
+          <rect x="98" y="62" width="8" height="8" rx="1"/><rect x="122" y="62" width="8" height="8" rx="1"/>
+          <rect x="146" y="62" width="8" height="8" rx="1"/><rect x="10" y="74" width="8" height="8" rx="1"/>
+          <rect x="46" y="74" width="8" height="8" rx="1"/><rect x="62" y="74" width="8" height="8" rx="1"/>
+          <rect x="86" y="74" width="8" height="8" rx="1"/><rect x="110" y="74" width="8" height="8" rx="1"/>
+          <rect x="134" y="74" width="8" height="8" rx="1"/><rect x="22" y="86" width="8" height="8" rx="1"/>
+          <rect x="62" y="86" width="8" height="8" rx="1"/><rect x="74" y="86" width="8" height="8" rx="1"/>
+          <rect x="98" y="86" width="8" height="8" rx="1"/><rect x="146" y="86" width="8" height="8" rx="1"/>
+          <rect x="10" y="98" width="8" height="8" rx="1"/><rect x="34" y="98" width="8" height="8" rx="1"/>
+          <rect x="74" y="98" width="8" height="8" rx="1"/><rect x="110" y="98" width="8" height="8" rx="1"/>
+          <rect x="62" y="110" width="8" height="8" rx="1"/><rect x="86" y="110" width="8" height="8" rx="1"/>
+          <rect x="122" y="110" width="8" height="8" rx="1"/><rect x="146" y="110" width="8" height="8" rx="1"/>
+          <rect x="74" y="122" width="8" height="8" rx="1"/><rect x="98" y="122" width="8" height="8" rx="1"/>
+          <rect x="62" y="134" width="8" height="8" rx="1"/><rect x="110" y="134" width="8" height="8" rx="1"/>
+          <rect x="134" y="134" width="8" height="8" rx="1"/><rect x="86" y="146" width="8" height="8" rx="1"/>
+          <rect x="122" y="146" width="8" height="8" rx="1"/><rect x="146" y="146" width="8" height="8" rx="1"/>
+        </g>
+        <circle cx="80" cy="80" r="14" fill="white"/>
+        <circle cx="80" cy="80" r="11" fill="#25d366"/>
+        <text x="80" y="85" text-anchor="middle" font-size="12" fill="white">💬</text>
+      </svg>
+    </div>
+    <p class="qr-label">WhatsApp पर चैट करने के लिए स्कैन करें</p>
+    <div class="whatsapp-number">
+      <span>📱</span> +91 XXXXX XXXXX
+    </div>
+    <div class="join-instruction">
+      <strong>📌 कैसे जुड़ें (Sandbox):</strong>
+      ऊपर दिया नंबर सेव करें → WhatsApp खोलें → यह मैसेज भेजें: <strong>"join krishi-sobati"</strong> → बात शुरू करें!
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Powered by <strong>कृषि सोबती AI</strong> · भारत के किसानों के लिए ❤️ से बनाया गया</p>
+  <p>ज्ञान स्रोत: ICAR · Vikaspedia · राज्य कृषि विभाग</p>
+  <span class="kisan">🌾 जय जवान, जय किसान! 🌾</span>
+</footer>
+
+</body>
+</html>
