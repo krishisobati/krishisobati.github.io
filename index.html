@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Krishi Sobati — Your AI Farming Advisor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green-deep: #1a3d1f;
+      --green-mid: #2d6a31;
+      --green-light: #4caf50;
+      --green-pale: #c8e6c9;
+      --gold: #f9a825;
+      --gold-light: #fff9c4;
+      --cream: #fdf6e3;
+      --brown: #5d4037;
+      --white: #ffffff;
+      --text-dark: #1a2e1b;
+      --text-muted: #4a6741;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background: var(--cream);
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* ── LANGUAGE BAR ── */
+    .lang-bar {
+      background: var(--green-deep);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      align-items: center;
+    }
+    .lang-bar span { color: var(--green-pale); font-size: 13px; margin-right: 6px; letter-spacing: 0.5px; }
+    .lang-btn {
+      padding: 5px 16px;
+      border-radius: 20px;
+      border: 1.5px solid var(--green-pale);
+      background: transparent;
+      color: var(--green-pale);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Lato', sans-serif;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--green-deep);
+      font-weight: 700;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 55%, #388e3c 100%);
+      position: relative;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 80% 50%, rgba(76,175,80,0.18) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 520px;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 32px;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .hero-text h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+    .hero-text h1 span { color: var(--gold); }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--green-pale);
+      margin: 16px 0 28px;
+      line-height: 1.7;
+      font-weight: 300;
+      max-width: 440px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 30px;
+      padding: 8px 18px;
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      margin-bottom: 28px;
+      backdrop-filter: blur(4px);
+    }
+    .hero-badge .dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: pulse 1.8s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gold);
+      color: var(--green-deep);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 14px 30px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(249,168,37,0.4);
+    }
+    .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(249,168,37,0.5); }
+
+    /* ── FARMER ILLUSTRATION ── */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .farmer-scene {
+      position: relative;
+      width: 320px;
+      height: 380px;
+    }
+
+    /* SVG Farmer */
+    .farmer-svg { width: 100%; height: 100%; }
+
+    /* ── WAVE DIVIDER ── */
+    .wave { display: block; width: 100%; }
+
+    /* ── HOW IT WORKS ── */
+    .section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+    .section-label {
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 0.75rem;
+      color: var(--green-mid);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      color: var(--green-deep);
+      margin-bottom: 40px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 24px;
+    }
+    .step {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 28px 24px;
+      border: 1px solid var(--green-pale);
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .step:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,61,31,0.1); }
+    .step-num {
+      width: 42px; height: 42px;
+      background: var(--green-deep);
+      color: var(--gold);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .step h3 { color: var(--green-deep); font-size: 1rem; margin-bottom: 8px; }
+    .step p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; font-weight: 300; }
+
+    /* ── FEATURES ── */
+    .features-bg { background: var(--green-deep); }
+    .features-section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 60px 24px;
+    }
+    .features-section .section-label { color: var(--gold); }
+    .features-section .section-title { color: var(--white); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 24px;
+      backdrop-filter: blur(4px);
+    }
+    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature-card h4 { color: var(--gold); font-size: 0.95rem; margin-bottom: 8px; }
+    .feature-card p { color: rgba(255,255,255,0.7); font-size: 0.88rem; line-height: 1.6; font-weight: 300; }
+
+    /* ── QR SECTION ── */
+    .qr-section {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 60px 24px;
+      text-align: center;
+    }
+    .qr-card {
+      background: var(--white);
+      border-radius: 24px;
+      padding: 48px 40px;
+      box-shadow: 0 8px 40px rgba(26,61,31,0.1);
+      border: 2px solid var(--green-pale);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .qr-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--green-deep);
+    }
+    .qr-subtitle { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; max-width: 420px; }
+
+    .qr-box {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border: 3px solid var(--green-deep);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qr-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* QR Code SVG pattern */
+    .qr-svg { width: 160px; height: 160px; }
+
+    .qr-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .whatsapp-number {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #25d366;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .whatsapp-number .wa-icon { font-size: 1.4rem; }
+
+    .join-instruction {
+      background: var(--gold-light);
+      border-left: 4px solid var(--gold);
+      border-radius: 8px;
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      color: var(--brown);
+      text-align: left;
+      max-width: 380px;
+    }
+    .join-instruction strong { display: block; margin-bottom: 4px; }
+
+    /* ── LANGUAGES STRIP ── */
+    .lang-strip {
+      background: var(--green-pale);
+      padding: 20px 24px;
+      text-align: center;
+    }
+    .lang-strip p { color: var(--green-deep); font-size: 0.9rem; font-weight: 300; margin-bottom: 10px; }
+    .lang-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .chip {
+      background: var(--white);
+      border: 1.5px solid var(--green-mid);
+      border-radius: 20px;
+      padding: 5px 16px;
+      font-size: 0.85rem;
+      color: var(--green-deep);
+      font-weight: 700;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--green-deep);
+      padding: 28px 24px;
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+    }
+    footer strong { color: var(--gold); }
+    footer .kisan { color: var(--green-pale); font-size: 1rem; display: block; margin-top: 6px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; padding: 40px 20px; }
+      .hero-visual { display: none; }
+      .hero-subtitle { margin: 16px auto 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Language Bar -->
+<div class="lang-bar">
+  <span>Language:</span>
+  <a class="lang-btn active" href="index.html">English</a>
+  <a class="lang-btn" href="hindi.html">हिंदी</a>
+  <a class="lang-btn" href="marathi.html">मराठी</a>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        AI-Powered WhatsApp Chatbot
+      </div>
+      <h1>Your Smart<br/><span>Farming Advisor</span><br/>on WhatsApp</h1>
+      <p class="hero-subtitle">Get personalised, week-by-week cropping schedules for your farm — just send a WhatsApp message in your language.</p>
+      <a href="#connect" class="cta-btn">
+        <span>💬</span> Chat on WhatsApp
+      </a>
+    </div>
+    <div class="hero-visual">
+      <!-- Illustrated Farmer SVG -->
+      <svg class="farmer-svg" viewBox="0 0 320 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Sky/ground background -->
+        <ellipse cx="160" cy="370" rx="130" ry="28" fill="rgba(0,0,0,0.15)" />
+
+        <!-- Wheat stalks background -->
+        <g opacity="0.6">
+          <line x1="40" y1="370" x2="50" y2="280" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="50" cy="275" rx="6" ry="14" fill="#81c784" transform="rotate(-10,50,275)"/>
+          <line x1="60" y1="370" x2="72" y2="270" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="72" cy="265" rx="6" ry="14" fill="#66bb6a" transform="rotate(8,72,265)"/>
+          <line x1="240" y1="370" x2="250" y2="275" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="250" cy="270" rx="6" ry="14" fill="#81c784" transform="rotate(-5,250,270)"/>
+          <line x1="265" y1="370" x2="275" y2="280" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="275" cy="275" rx="6" ry="14" fill="#66bb6a" transform="rotate(12,275,275)"/>
+          <line x1="285" y1="370" x2="292" y2="268" stroke="#a5d6a7" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="292" cy="263" rx="6" ry="14" fill="#81c784" transform="rotate(-8,292,263)"/>
+        </g>
+
+        <!-- Ground strip -->
+        <rect x="20" y="355" width="280" height="45" rx="8" fill="#33691e" opacity="0.5"/>
+
+        <!-- Farmer body - dhoti/kurta -->
+        <rect x="126" y="230" width="68" height="110" rx="12" fill="#ffffff" opacity="0.95"/>
+        <!-- Dhoti lines -->
+        <line x1="160" y1="280" x2="145" y2="340" stroke="#e0e0e0" stroke-width="1.5"/>
+        <line x1="160" y1="280" x2="175" y2="340" stroke="#e0e0e0" stroke-width="1.5"/>
+
+        <!-- Legs -->
+        <rect x="132" y="330" width="22" height="50" rx="10" fill="#8d6e63"/>
+        <rect x="166" y="330" width="22" height="50" rx="10" fill="#8d6e63"/>
+
+        <!-- Feet -->
+        <ellipse cx="143" cy="380" rx="14" ry="6" fill="#5d4037"/>
+        <ellipse cx="177" cy="380" rx="14" ry="6" fill="#5d4037"/>
+
+        <!-- Arms -->
+        <!-- Left arm raised with plant -->
+        <path d="M126 255 Q90 230 80 200" stroke="#c68642" stroke-width="16" stroke-linecap="round" fill="none"/>
+        <!-- Right arm relaxed -->
+        <path d="M194 255 Q220 270 228 295" stroke="#c68642" stroke-width="16" stroke-linecap="round" fill="none"/>
+
+        <!-- Plant in left hand -->
+        <line x1="80" y1="200" x2="80" y2="155" stroke="#388e3c" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="80" cy="148" rx="12" ry="18" fill="#4caf50" transform="rotate(-15,80,148)"/>
+        <ellipse cx="68" cy="160" rx="10" ry="15" fill="#66bb6a" transform="rotate(20,68,160)"/>
+        <ellipse cx="92" cy="158" rx="10" ry="15" fill="#43a047" transform="rotate(-20,92,158)"/>
+
+        <!-- Neck -->
+        <rect x="150" y="210" width="20" height="24" rx="6" fill="#c68642"/>
+
+        <!-- Head -->
+        <circle cx="160" cy="195" r="38" fill="#c68642"/>
+
+        <!-- Face -->
+        <!-- Eyes - happy/squinting -->
+        <path d="M145 192 Q150 186 155 192" stroke="#3e2723" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M165 192 Q170 186 175 192" stroke="#3e2723" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+        <!-- Big smile -->
+        <path d="M145 205 Q160 220 175 205" stroke="#3e2723" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+        <!-- Cheek blush -->
+        <circle cx="143" cy="208" r="7" fill="#e57373" opacity="0.35"/>
+        <circle cx="177" cy="208" r="7" fill="#e57373" opacity="0.35"/>
+
+        <!-- Moustache -->
+        <path d="M150 202 Q160 207 170 202" stroke="#4e342e" stroke-width="2" stroke-linecap="round" fill="none"/>
+
+        <!-- Turban / hat -->
+        <ellipse cx="160" cy="162" rx="42" ry="12" fill="#f9a825"/>
+        <path d="M118 162 Q130 140 160 135 Q190 140 202 162" fill="#f9a825"/>
+        <!-- Turban knot -->
+        <circle cx="160" cy="137" r="10" fill="#fb8c00"/>
+        <circle cx="160" cy="137" r="5" fill="#f9a825"/>
+
+        <!-- Tool in right hand -->
+        <line x1="228" y1="295" x2="248" y2="355" stroke="#795548" stroke-width="6" stroke-linecap="round"/>
+        <!-- Hoe head -->
+        <rect x="238" y="348" width="28" height="8" rx="3" fill="#546e7a" transform="rotate(-20,238,348)"/>
+
+        <!-- WhatsApp phone icon floating -->
+        <circle cx="262" cy="160" r="22" fill="#25d366" opacity="0.95"/>
+        <text x="262" y="167" text-anchor="middle" font-size="18" fill="white">💬</text>
+
+        <!-- Stars/sparkles -->
+        <text x="98" y="140" font-size="14" fill="#f9a825" opacity="0.9">✦</text>
+        <text x="225" y="130" font-size="10" fill="#f9a825" opacity="0.7">✦</text>
+        <text x="240" y="155" font-size="8" fill="#f9a825" opacity="0.6">✦</text>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Wave -->
+  <svg class="wave" viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0,40 C360,0 1080,80 1440,20 L1440,60 L0,60 Z" fill="#fdf6e3"/>
+  </svg>
+</section>
+
+<!-- How It Works -->
+<section class="section">
+  <p class="section-label">How It Works</p>
+  <h2 class="section-title">Simple as sending a message 📱</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Scan & Chat</h3>
+      <p>Scan the QR code below or save the WhatsApp number to start a conversation with Krishi Sobati.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Share Your Details</h3>
+      <p>Tell us your district, crops you want to grow, land size and water source — in your own language.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Get Your Schedule</h3>
+      <p>Receive a personalised week-by-week cropping schedule based on your location and season.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h3>Grow Better</h3>
+      <p>Follow the schedule for soil prep, sowing, irrigation, fertiliser, pest control and harvest.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<div class="features-bg">
+  <div class="features-section">
+    <p class="section-label">What Krishi Sobati Offers</p>
+    <h2 class="section-title">Everything your farm needs 🌾</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🗺️</div>
+        <h4>Location-Specific Advice</h4>
+        <p>Schedules tailored to your district's climate, soil type and agro-climatic zone.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <h4>8 Indian Languages</h4>
+        <p>Chat in Hindi, Marathi, Punjabi, Tamil, Telugu, Kannada, Bengali or English.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h4>Week-by-Week Plan</h4>
+        <p>Soil prep → sowing → irrigation → fertiliser → pest control → harvest. All in one plan.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h4>AI-Powered</h4>
+        <p>Backed by ICAR publications, Vikaspedia and state agriculture department knowledge.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📞</div>
+        <h4>Always a Fallback</h4>
+        <p>Unsure? We'll connect you to Kisan Call Centre (1800-180-1551) for expert help.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💚</div>
+        <h4>Free to Use</h4>
+        <p>No app downloads, no registration. Just WhatsApp — the app you already use.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Language Strip -->
+<div class="lang-strip">
+  <p>Krishi Sobati speaks your language</p>
+  <div class="lang-chips">
+    <span class="chip">English</span>
+    <span class="chip">हिंदी</span>
+    <span class="chip">मराठी</span>
+    <span class="chip">ਪੰਜਾਬੀ</span>
+    <span class="chip">தமிழ்</span>
+    <span class="chip">తెలుగు</span>
+    <span class="chip">ಕನ್ನಡ</span>
+    <span class="chip">বাংলা</span>
+  </div>
+</div>
+
+<!-- QR / Connect Section -->
+<section class="qr-section" id="connect">
+  <div class="qr-card">
+    <h2 class="qr-title">Start Chatting Now 🌱</h2>
+    <p class="qr-subtitle">Scan the QR code with your phone camera, or save the WhatsApp number and send "Namaste" to begin.</p>
+
+    <!-- QR Code placeholder -->
+    <div class="qr-box">
+      <svg class="qr-svg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <!-- QR placeholder pattern -->
+        <rect width="160" height="160" fill="white"/>
+        <!-- Corner squares -->
+        <rect x="10" y="10" width="44" height="44" rx="4" fill="#1a3d1f"/>
+        <rect x="16" y="16" width="32" height="32" rx="2" fill="white"/>
+        <rect x="22" y="22" width="20" height="20" rx="1" fill="#1a3d1f"/>
+
+        <rect x="106" y="10" width="44" height="44" rx="4" fill="#1a3d1f"/>
+        <rect x="112" y="16" width="32" height="32" rx="2" fill="white"/>
+        <rect x="118" y="22" width="20" height="20" rx="1" fill="#1a3d1f"/>
+
+        <rect x="10" y="106" width="44" height="44" rx="4" fill="#1a3d1f"/>
+        <rect x="16" y="112" width="32" height="32" rx="2" fill="white"/>
+        <rect x="22" y="118" width="20" height="20" rx="1" fill="#1a3d1f"/>
+
+        <!-- Data dots (sample pattern) -->
+        <g fill="#1a3d1f">
+          <rect x="62" y="10" width="8" height="8" rx="1"/><rect x="74" y="10" width="8" height="8" rx="1"/>
+          <rect x="86" y="10" width="8" height="8" rx="1"/><rect x="62" y="22" width="8" height="8" rx="1"/>
+          <rect x="86" y="22" width="8" height="8" rx="1"/><rect x="74" y="34" width="8" height="8" rx="1"/>
+          <rect x="62" y="46" width="8" height="8" rx="1"/><rect x="86" y="46" width="8" height="8" rx="1"/>
+          <rect x="10" y="62" width="8" height="8" rx="1"/><rect x="22" y="62" width="8" height="8" rx="1"/>
+          <rect x="46" y="62" width="8" height="8" rx="1"/><rect x="62" y="62" width="8" height="8" rx="1"/>
+          <rect x="74" y="62" width="8" height="8" rx="1"/><rect x="98" y="62" width="8" height="8" rx="1"/>
+          <rect x="110" y="62" width="8" height="8" rx="1"/><rect x="134" y="62" width="8" height="8" rx="1"/>
+          <rect x="146" y="62" width="8" height="8" rx="1"/><rect x="10" y="74" width="8" height="8" rx="1"/>
+          <rect x="34" y="74" width="8" height="8" rx="1"/><rect x="62" y="74" width="8" height="8" rx="1"/>
+          <rect x="86" y="74" width="8" height="8" rx="1"/><rect x="122" y="74" width="8" height="8" rx="1"/>
+          <rect x="146" y="74" width="8" height="8" rx="1"/><rect x="22" y="86" width="8" height="8" rx="1"/>
+          <rect x="46" y="86" width="8" height="8" rx="1"/><rect x="74" y="86" width="8" height="8" rx="1"/>
+          <rect x="98" y="86" width="8" height="8" rx="1"/><rect x="110" y="86" width="8" height="8" rx="1"/>
+          <rect x="134" y="86" width="8" height="8" rx="1"/><rect x="10" y="98" width="8" height="8" rx="1"/>
+          <rect x="62" y="98" width="8" height="8" rx="1"/><rect x="74" y="98" width="8" height="8" rx="1"/>
+          <rect x="86" y="98" width="8" height="8" rx="1"/><rect x="122" y="98" width="8" height="8" rx="1"/>
+          <rect x="62" y="110" width="8" height="8" rx="1"/><rect x="86" y="110" width="8" height="8" rx="1"/>
+          <rect x="110" y="110" width="8" height="8" rx="1"/><rect x="134" y="110" width="8" height="8" rx="1"/>
+          <rect x="146" y="110" width="8" height="8" rx="1"/><rect x="62" y="122" width="8" height="8" rx="1"/>
+          <rect x="74" y="122" width="8" height="8" rx="1"/><rect x="98" y="122" width="8" height="8" rx="1"/>
+          <rect x="122" y="122" width="8" height="8" rx="1"/><rect x="62" y="134" width="8" height="8" rx="1"/>
+          <rect x="86" y="134" width="8" height="8" rx="1"/><rect x="110" y="134" width="8" height="8" rx="1"/>
+          <rect x="146" y="134" width="8" height="8" rx="1"/><rect x="74" y="146" width="8" height="8" rx="1"/>
+          <rect x="98" y="146" width="8" height="8" rx="1"/><rect x="122" y="146" width="8" height="8" rx="1"/>
+          <rect x="134" y="146" width="8" height="8" rx="1"/>
+        </g>
+        <!-- Centre logo -->
+        <circle cx="80" cy="80" r="14" fill="white"/>
+        <circle cx="80" cy="80" r="11" fill="#25d366"/>
+        <text x="80" y="85" text-anchor="middle" font-size="12" fill="white">💬</text>
+      </svg>
+    </div>
+
+    <p class="qr-label">Scan to chat on WhatsApp</p>
+
+    <div class="whatsapp-number">
+      <span class="wa-icon">📱</span>
+      +91 XXXXX XXXXX
+    </div>
+
+    <div class="join-instruction">
+      <strong>📌 How to join (Sandbox):</strong>
+      Save the number above → Open WhatsApp → Send the message: <strong>"join krishi-sobati"</strong> → Start chatting!
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>Powered by <strong>Krishi Sobati AI</strong> · Built with ❤️ for Indian Farmers</p>
+  <p>Knowledge source: ICAR · Vikaspedia · State Agriculture Departments</p>
+  <span class="kisan">🌾 Jai Jawan, Jai Kisan! 🌾</span>
+</footer>
+
+</body>
+</html>
